@@ -1,48 +1,69 @@
 <x-layouts title="Tin Tức">
-    <!-- News Hero Section -->
-    <section class="news-hero">
-        <div class="news-hero-content">
-            @if (isset($newsCategory))
-                <h1>{{ $newsCategory->name }}</h1>
-                <p>{{ $newsCategory->description }}</p>
-            @else
-                <h1>Tin tức nổi bật</h1>
-                <p>Khám phá những tin tức mới nhất và nổi bật từ trung tâm đào tạo của chúng tôi.</p>
-            @endif
+    <!-- Hero Section -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row align-items-center min-vh-50">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">
+                        @if (isset($newsCategory))
+                            {{ $newsCategory->name }}
+                        @else
+                            Tin tức nổi bật
+                        @endif
+                    </h1>
+                    <p class="lead">
+                        @if (isset($newsCategory))
+                            {{ $newsCategory->description }}
+                        @else
+                            Khám phá những tin tức mới nhất và nổi bật từ trung tâm đào tạo của chúng tôi
+                        @endif
+                    </p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Featured News -->
-    <section class="featured-news">
-        <div class="featured-container">
-            @foreach ($news as $item)
-                 <div class="featured-article">
-                    <div class="featured-image">
-                        <a href="{{ route('news.show', $item->slug) }}">
-                            <img src="{{ Storage::url($item->featured_image) }}" alt="{{ $item->title }}">
-                            <div class="featured-category">{{ $item->news_category->name }}</div>
-                        </a>
-                    </div>
-                    <div class="featured-content">
-                        <div class="featured-date">{{ $item->published_at?->format('d/m/Y') }}</div>
-                        <h3>
-                            <a href="{{ route('news.show', $item->slug) }}">
-                                {{$item->title}}
-                            </a>
-                        </h3>
-                        <p>{{Str::limit(strip_tags($item->summary ?? $item->content), 140)}}</p>
-                        <div class="featured-stats">
-                            <span>
-                                <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500 align-middle" />
-                                {{ $item->view_count }} lượt xem
-                            </span>
+    <!-- News Articles -->
+    <section class="py-5">
+        <div class="container">
+            @forelse ($news as $item)
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{ Storage::url($item->featured_image) }}" 
+                                alt="{{ $item->title }}" 
+                                class="img-fluid h-100" style="object-fit: cover; min-height: 250px;">
                         </div>
-                        <a href="{{ route('news.show', $item->slug) }}" class="read-more-link">
-                            Xem thêm &rarr;
-                        </a>
+                        <div class="col-md-8">
+                            <div class="card-body h-100 d-flex flex-column">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <span class="badge bg-info">{{ $item->news_category->name }}</span>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        {{ $item->published_at?->format('d/m/Y') ?? $item->created_at->format('d/m/Y') }}
+                                    </small>
+                                    <small class="text-muted ms-auto">
+                                        <i class="bi bi-eye me-1"></i>
+                                        {{ $item->view_count ?? 0 }} lượt xem
+                                    </small>
+                                </div>
+                                <h5 class="card-title fw-bold mb-3 flex-grow-1">{{ $item->title }}</h5>
+                                <p class="card-text text-muted mb-4">{{ Str::limit(strip_tags($item->summary ?? $item->content), 140) }}</p>
+                                <a href="{{ route('news.show', $item->slug) }}" 
+                                    class="btn btn-primary btn-sm align-self-start">
+                                    <i class="bi bi-arrow-right me-2"></i>Xem thêm
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Thông báo:</strong> Chưa có tin tức nào
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endforelse
         </div>
     </section>
 

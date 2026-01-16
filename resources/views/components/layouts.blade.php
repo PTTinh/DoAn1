@@ -14,7 +14,17 @@
         ogDescription="{{ $attributes['ogDescription'] ?? App\Helpers\SettingHelper::get('seo_description', 'Chưa cập nhật') }}"
         ogImage="{{ $attributes['ogImage'] ?? asset('storage/' . App\Helpers\SettingHelper::get('seo_image')) }}" />
     <link rel="icon" href="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}" type="image/png">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    
+    {{-- Bootstrap 5 CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    {{-- Bootstrap Icons --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    {{-- Custom Bootstrap CSS --}}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-custom.css') }}">
+    
+    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
 
     {{-- Custom CSS from settings --}}
     {{-- Custom CSS từ settings --}}
@@ -29,282 +39,378 @@
 </head>
 
 <body>
-    <header>
-        <div class="topbar">
-            <div class="container">
-                <div class="topbar-left">
-                    <div class="contact-item">
-                        <x-heroicon-o-envelope class="icon" />
-                        <span>{{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</span>
-                    </div>
-                    <div class="contact-item">
-                        <x-heroicon-o-phone class="icon" />
-                        <span>{{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</span>
+    <!-- Top Bar -->
+    <div class="bg-primary text-white py-2 border-bottom">
+        <div class="container-fluid">
+            <div class="row align-items-center g-3">
+                <div class="col-12 col-md-6">
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="mailto:{{ App\Helpers\SettingHelper::get('email', '') }}" class="text-white text-decoration-none">
+                            <i class="bi bi-envelope me-2"></i>
+                            <span class="d-none d-sm-inline">{{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</span>
+                        </a>
+                        <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" class="text-white text-decoration-none">
+                            <i class="bi bi-telephone me-2"></i>
+                            <span class="d-none d-sm-inline">{{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</span>
+                        </a>
                     </div>
                 </div>
-                <div class="topbar-right">
-                    <a href="{{ route('contacts') }}" class="contact-link">Liên hệ</a>
-                    <div class="social-links">
-                        <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', '#') }}" aria-label="Facebook"
-                            class="social-link">
-                            <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                            </svg>
+                <div class="col-12 col-md-6">
+                    <div class="d-flex justify-content-md-end gap-3">
+                        <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', '#') }}" class="text-white" title="Facebook">
+                            <i class="bi bi-facebook"></i>
                         </a>
-                        <a href="{{ App\Helpers\SettingHelper::get('youtube_channel', '#') }}" aria-label="YouTube"
-                            class="social-link">
-                            <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                            </svg>
+                        <a href="https://youtube.com" class="text-white" title="YouTube">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+                        <a href="https://zalo.me/{{ App\Helpers\SettingHelper::get('zalo', '') }}" class="text-white" title="Zalo">
+                            <i class="bi bi-chat-dots"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="brand-row">
-            <div class="container">
-                <div class="logo">
-                    <a href="{{ url('/') }}">
-                        <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-                            alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                            class="logo-image">
-                    </a>
+    <!-- Header Navigation -->
+    <header class="sticky-top bg-white border-bottom">
+        <nav class="navbar navbar-expand-lg navbar-light py-3">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
+                        alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
+                        style="max-height: 50px;">
+                </a>
+
+                <!-- Mobile Search & Toggle -->
+                <div class="d-lg-none d-flex align-items-center gap-2">
+                    <button class="btn btn-link" data-bs-toggle="modal" data-bs-target="#searchModal">
+                        <i class="bi bi-search text-dark"></i>
+                    </button>
+                    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
                 </div>
 
-                <form action="{{ route('search') }}" method="GET" class="header-search" role="search">
-                    <input type="text" name="q" placeholder="Tìm kiếm khóa học, tin tức..."
-                        aria-label="Tìm kiếm">
-                    <button type="submit" aria-label="Tìm kiếm">
-                        <x-heroicon-o-magnifying-glass class="search-icon" />
-                    </button>
+                <!-- Search Form (Desktop) -->
+                <form action="{{ route('search') }}" method="GET" class="d-none d-lg-flex mx-3 flex-grow-1" role="search">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control form-control-sm"
+                            placeholder="Tìm kiếm khóa học, tin tức..." aria-label="Tìm kiếm">
+                        <button class="btn btn-outline-primary btn-sm" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
                 </form>
 
-                <div class="header-contact">
-                    <div class="contact-info">
-                        <x-heroicon-o-phone class="contact-icon" />
-                        <div class="contact-details">
-                            <span class="contact-label">Hotline</span>
-                            <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" class="contact-number">
-                                {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <nav>
-            <input type="checkbox" id="menu-toggle" class="hidden">
-            <label for="menu-toggle" class="menu-button">
-                <x-heroicon-o-bars-3 class="w-8 h-8" />
-            </label>
-            <ul class="desktop-menu">
-                <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                <li><a href="/#about" class="{{ request()->is('/#about') ? 'active' : '' }}">Giới thiệu</a></li>
-                <li class="dropdown">
-                    <a href="{{ route('courses.index') }}"
-                        class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
-                        id="courses-toggle">Khóa học</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('courses.index') }}"
-                                class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả các khóa
-                                học</a>
-                        </li>
-                        @foreach (App\Models\Category::all() as $Category)
-                            <li><a href="{{ route('courses.category', $Category->slug) }}"
-                                    class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </li>
-                <li><a href="{{ route('rooms.index') }}"
-                        class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}">Phòng
-                        học</a></li>
-                <li class="dropdown">
-                    <a href="{{ route('news.index') }}"
-                        class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"
-                        id="news-toggle">Tin tức - Sự kiện</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('news.index') }}"
-                                class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức nổi bật</a>
-                        </li>
-                        @foreach (App\Models\NewsCategory::all() as $newsCategory)
-                            <li><a href="{{ route('news.category', $newsCategory->slug) }}"
-                                    class="news-category {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}">{{ $newsCategory->name }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </li>
-                <li><a href="{{ route('contacts') }}"
-                        class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên hệ</a></li>
-            </ul>
-            <div class="sidebar">
-                <div class="sidebar-header">
-                    <div class="logo">
-                        <a href="{{ url('/') }}">
-                            <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-                                alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                                class="logo-image" style="max-height: 100px;">
+                <!-- Desktop Hotline -->
+                <div class="d-none d-lg-flex align-items-center ms-auto">
+                    <div class="text-end">
+                        <small class="text-muted d-block">Hotline</small>
+                        <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}"
+                            class="text-primary text-decoration-none fw-bold">
+                            {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}
                         </a>
                     </div>
-                    <label for="menu-toggle" class="close-button">
-                        <x-heroicon-o-x-mark class="w-8 h-8" />
-                    </label>
                 </div>
-                <ul class="sidebar-menu">
-                    <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                    <li><a href="/#about" class="{{ request()->is('/#about') ? 'active' : '' }}">Giới thiệu</a></li>
-                    <li class="dropdown">
-                        <div class="dropdown-header">
-                            <a href="{{ route('courses.index') }}"
-                                class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">
-                                Khóa
-                                học</a>
-                            <label for="dropdown-toggle-1" class="dropdown-icon">
-                                <x-heroicon-o-chevron-down id="dropdown-icon-1" class="w-6 h-6" />
-                            </label>
-                            <input type="checkbox" id="dropdown-toggle-1" class="dropdown-toggle hidden">
-                        </div>
-                        <ul class="dropdown-menu" id="dropdown-menu-1">
-                            <li><a href="{{ route('courses.index') }}"
-                                    class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả các khóa
-                                    học</a>
-                            </li>
-                            @foreach (App\Models\Category::all() as $Category)
-                                <li><a href="{{ route('courses.category', $Category->slug) }}"
-                                        class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a>
+
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">
+                                <i class="bi bi-house me-1"></i> Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/#about">
+                                <i class="bi bi-info-circle me-1"></i> Giới thiệu
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
+                                href="{{ route('courses.index') }}" id="coursesDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-book me-1"></i> Khóa học
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('courses.index') ? 'active' : '' }}"
+                                        href="{{ route('courses.index') }}">Tất cả khóa học</a>
                                 </li>
-                            @endforeach
-                        </ul>
-                    </li>
-                    <li><a href="{{ route('rooms.index') }}"
-                            class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}">Phòng
-                            học</a>
-                    <li class="dropdown">
-                        <div class="dropdown-header">
-                            <a href="{{ route('news.index') }} "
-                                class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}">Tin
-                                tức - Sự kiện</a>
-                            <label for="dropdown-toggle-2" class="dropdown-icon">
-                                <x-heroicon-o-chevron-down id="dropdown-icon-2" class="w-6 h-6" />
-                            </label>
-                            <input type="checkbox" id="dropdown-toggle-2" class="dropdown-toggle hidden">
-                        </div>
-                        <ul class="dropdown-menu" id="dropdown-menu-2">
-                            <li><a href="{{ route('news.index') }}"
-                                    class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức nổi bật</a>
-                            </li>
-                            @foreach (App\Models\NewsCategory::all() as $newsCategory)
-                                <li><a href="{{ route('news.category', $newsCategory->slug) }}"
-                                        class="news-category {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}">{{ $newsCategory->name }}</a>
-                            @endforeach
-                        </ul>
-                    </li>
-                    <li><a href="{{ route('contacts') }}"
-                            class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên hệ</a></li>
-                </ul>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                @foreach (App\Models\Category::all() as $Category)
+                                    <li>
+                                        <a class="dropdown-item {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}"
+                                            href="{{ route('courses.category', $Category->slug) }}">
+                                            {{ $Category->name }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}"
+                                href="{{ route('rooms.index') }}">
+                                <i class="bi bi-building me-1"></i> Phòng học
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"
+                                href="{{ route('news.index') }}" id="newsDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-newspaper me-1"></i> Tin tức
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="newsDropdown">
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('news.index') ? 'active' : '' }}"
+                                        href="{{ route('news.index') }}">Tất cả tin tức</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                @foreach (App\Models\NewsCategory::all() as $newsCategory)
+                                    <li>
+                                        <a class="dropdown-item {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}"
+                                            href="{{ route('news.category', $newsCategory->slug) }}">
+                                            {{ $newsCategory->name }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('contacts') ? 'active' : '' }}"
+                                href="{{ route('contacts') }}">
+                                <i class="bi bi-envelope me-1"></i> Liên hệ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <label for="menu-toggle" class="overlay"></label>
         </nav>
     </header>
     <main>
         @include('includes._notify')
         {{ $slot }}
     </main>
+
     <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Khóa học</h3>
-                @foreach (App\Models\Category::all() as $Category)
-                    <a href="{{ route('courses.category', $Category->slug) }}"
-                        class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a><br>
-                @endforeach
-            </div>
-            <div class="footer-section">
-                <h3>Liên hệ</h3>
-                <p><strong>Địa chỉ:</strong> {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}</p>
-                <p><strong>Điện thoại:</strong> {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</p>
-                <p><strong>Email:</strong> {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</p>
-            </div>
-            <div class="footer-section">
-                <h3>Giờ làm việc</h3>
-                <p><strong>Thứ 2 - Thứ 7</strong></p>
-                <p><strong>Sáng:</strong> 8:00 - 11:30</p>
-                <p><strong>Tối:</strong> 18:00 - 21:00</p>
-                <p><strong>Chủ nhật:</strong> Nghỉ</p>
-            </div>
-            <div class="footer-section">
-                <h3>Vị trí trung tâm</h3>
-                <div class="map-wrapper">
-                    <iframe src="{{ App\Helpers\SettingHelper::get('google_map', '') }}" width="100%"
-                        height="200" style="border:0;" allowfullscreen="" loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+    <footer class="bg-dark text-white py-5 mt-5">
+        <div class="container-fluid mb-5">
+            <div class="row g-4">
+                <!-- Khóa học -->
+                <div class="col-md-6 col-lg-3">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-book text-primary me-2"></i>Khóa học
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{{ route('courses.index') }}" class="text-white text-decoration-none">
+                                Tất cả khóa học
+                            </a>
+                        </li>
+                        @foreach (App\Models\Category::all() as $Category)
+                            <li class="mb-2">
+                                <a href="{{ route('courses.category', $Category->slug) }}"
+                                    class="text-white text-decoration-none">
+                                    {{ $Category->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <!-- Liên hệ -->
+                <div class="col-md-6 col-lg-3">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-telephone text-primary me-2"></i>Liên hệ
+                    </h5>
+                    <p class="mb-2">
+                        <strong>Địa chỉ:</strong><br>
+                        <a href="#" class="text-white text-decoration-none">
+                            {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}
+                        </a>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Điện thoại:</strong><br>
+                        <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" class="text-white text-decoration-none">
+                            {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}
+                        </a>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Email:</strong><br>
+                        <a href="mailto:{{ App\Helpers\SettingHelper::get('email', '') }}" class="text-white text-decoration-none">
+                            {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Giờ làm việc -->
+                <div class="col-md-6 col-lg-3">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-clock text-primary me-2"></i>Giờ làm việc
+                    </h5>
+                    <p class="mb-1"><strong>Thứ 2 - Thứ 7</strong></p>
+                    <p class="mb-1">
+                        <strong>Sáng:</strong> 8:00 - 11:30
+                    </p>
+                    <p class="mb-1">
+                        <strong>Tối:</strong> 18:00 - 21:00
+                    </p>
+                    <p class="mb-0">
+                        <strong>Chủ nhật:</strong> Nghỉ
+                    </p>
+                </div>
+
+                <!-- Bản đồ -->
+                <div class="col-md-6 col-lg-3">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-geo-alt text-primary me-2"></i>Vị trí
+                    </h5>
+                    <div class="ratio ratio-16x9">
+                        <iframe src="{{ App\Helpers\SettingHelper::get('google_map', '') }}"
+                            style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
                 </div>
             </div>
-            <style></style>
         </div>
-        <div class="footer-menu">
-            <ul>
-                <li><a class="{{ request()->is('/') ? 'active' : '' }}" href="/">Trang chủ</a></li>
-                <li><a class="{{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
-                        href="{{ route('courses.index') }}">Khóa học</a></li>
-                <li><a class="/#about {{ request()->is('/#about') ? 'active' : '' }}" href="/#about">Giới thiệu</a>
-                </li>
-                <li><a class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}"
-                        href="{{ route('rooms.index') }}">Phòng học</a></li>
-                <li><a class="{{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"
-                        href="{{ route('news.index') }}">Tin tức - Sự kiện</a></li>
-                <li><a class="{{ request()->routeIs('contacts') ? 'active' : '' }}"
-                        href="{{ route('contacts') }}">Liên hệ</a></li>
-            </ul>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; {{ date('Y') }} {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}.
-                All rights reserved.</p>
+
+        <!-- Footer Bottom -->
+        <hr class="border-secondary my-4">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <p class="mb-0">
+                        &copy; {{ date('Y') }} {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}.
+                        All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled d-flex justify-content-md-end gap-4 flex-wrap mb-0">
+                        <li>
+                            <a href="/" class="text-white text-decoration-none">
+                                <i class="bi bi-house me-1"></i>Trang chủ
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('courses.index') }}" class="text-white text-decoration-none">
+                                <i class="bi bi-book me-1"></i>Khóa học
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#about" class="text-white text-decoration-none">
+                                <i class="bi bi-info-circle me-1"></i>Giới thiệu
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('rooms.index') }}" class="text-white text-decoration-none">
+                                <i class="bi bi-building me-1"></i>Phòng học
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('news.index') }}" class="text-white text-decoration-none">
+                                <i class="bi bi-newspaper me-1"></i>Tin tức
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('contacts') }}" class="text-white text-decoration-none">
+                                <i class="bi bi-envelope me-1"></i>Liên hệ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </footer>
-    <!-- Floating Contact Button with Popup -->
-    <div class="floating-contact-wrapper">
-        <!-- Main Toggle Button -->
-        <button class="main-contact-btn" id="contactToggle" aria-label="Liên hệ">
-            <div class="btn-icon-wrapper">
-                <x-heroicon-o-phone class="icon phone-icon" />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo"
-                    class="icon zalo-icon">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
-                    alt="Facebook" class="icon facebook-icon">
-            </div>
+
+    <!-- Floating Contact Button -->
+    <div class="fixed-bottom mb-3 me-3" style="z-index: 999;">
+        <button class="btn btn-primary btn-lg rounded-circle shadow-lg" id="contactToggle"
+            data-bs-toggle="offcanvas" data-bs-target="#contactOffcanvas" aria-controls="contactOffcanvas">
+            <i class="bi bi-chat-left-dots"></i>
         </button>
+    </div>
 
-        <!-- Popup Menu -->
-        <div class="contact-popup" id="contactPopup">
-            <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" class="contact-btn contact-btn-phone"
-                aria-label="Gọi điện">
-                <x-heroicon-o-phone class="w-6 h-6" />
-                <span class="btn-label">Gọi điện</span>
-            </a>
-            <a href="https://zalo.me/{{ App\Helpers\SettingHelper::get('zalo', '') }}" target="_blank"
-                class="contact-btn contact-btn-zalo" aria-label="Zalo">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo">
-                <span class="btn-label">Zalo</span>
-            </a>
-            <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', 'https://facebook.com') }}"
-                target="_blank" class="contact-btn contact-btn-facebook" aria-label="Facebook">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
-                    alt="Facebook">
-                <span class="btn-label">Facebook</span>
-            </a>
+    <!-- Contact Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="contactOffcanvas" aria-labelledby="contactLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="contactLabel">Liên hệ với chúng tôi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
+        <div class="offcanvas-body">
+            <div class="d-grid gap-2">
+                <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}"
+                    class="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-telephone"></i> Gọi điện
+                </a>
+                <a href="https://zalo.me/{{ App\Helpers\SettingHelper::get('zalo', '') }}" target="_blank"
+                    class="btn btn-outline-info btn-lg d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-chat-dots"></i> Zalo
+                </a>
+                <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', 'https://facebook.com') }}" target="_blank"
+                    class="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-facebook"></i> Facebook
+                </a>
+            </div>
+            <hr class="my-3">
+            <div>
+                <h6 class="fw-bold mb-2">Thông tin liên hệ</h6>
+                <p class="mb-2">
+                    <i class="bi bi-geo-alt text-primary me-2"></i>
+                    {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}
+                </p>
+                <p class="mb-2">
+                    <i class="bi bi-telephone text-primary me-2"></i>
+                    <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" class="text-decoration-none">
+                        {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}
+                    </a>
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-envelope text-primary me-2"></i>
+                    <a href="mailto:{{ App\Helpers\SettingHelper::get('email', '') }}" class="text-decoration-none">
+                        {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
 
-        <!-- Overlay -->
-        <div class="contact-overlay" id="contactOverlay"></div>
+    <!-- Mobile Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Tìm kiếm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('search') }}" method="GET" class="mb-3">
+                        <div class="input-group input-group-lg">
+                            <input type="text" name="q" class="form-control"
+                                placeholder="Tìm kiếm khóa học, tin tức..." autofocus>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{ $scripts ?? '' }}
+    
+    {{-- Bootstrap 5 JS Bundle (includes Popper) --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     @if(App\Helpers\SettingHelper::get('ga_body'))
         {!! App\Helpers\SettingHelper::get('ga_body') !!}
     @endif
