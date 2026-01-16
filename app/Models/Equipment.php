@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
  * @property string $name
- * @property float|null $price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -29,15 +28,11 @@ class Equipment extends Model
 
 	protected $casts = [
 		'created_by' => 'int',
-		'price' => 'decimal:2',
-		'is_free' => 'boolean'
 	];
 
 	protected $fillable = [
 		'created_by',
 		'name',
-		'price',
-		'is_free'
 	];
 
 	public function creator()

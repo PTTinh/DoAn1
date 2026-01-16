@@ -95,8 +95,6 @@ CREATE TABLE IF NOT EXISTS `equipments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_by` bigint(20) unsigned DEFAULT NULL,
   `name` varchar(100) NOT NULL,
-  `price` decimal(15,0) DEFAULT NULL,
-  `is_free` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -207,34 +205,6 @@ CREATE TABLE IF NOT EXISTS `room_bookings` (
   CONSTRAINT `room_bookings_room_id_foreign_20250713` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Data exporting was unselected.
-
--- Dumping structure for table lms_simple.room_booking_backups
-CREATE TABLE IF NOT EXISTS `room_booking_backups` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `booking_group_id` bigint(20) unsigned DEFAULT NULL,
-  `user_id` bigint(20) unsigned NOT NULL,
-  `room_id` bigint(20) unsigned NOT NULL,
-  `course_id` bigint(20) unsigned DEFAULT NULL,
-  `booking_date` date NOT NULL,
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  `purpose` varchar(255) DEFAULT NULL,
-  `is_recurring` tinyint(1) NOT NULL DEFAULT 0,
-  `status` enum('pending','approved','rejected','cancelled') NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `room_bookings_booking_group_id_foreign` (`booking_group_id`),
-  KEY `room_bookings_user_id_foreign` (`user_id`),
-  KEY `room_bookings_course_id_foreign` (`course_id`),
-  KEY `idx_room_bookings_date` (`booking_date`),
-  KEY `idx_room_bookings_room_date` (`room_id`,`booking_date`),
-  CONSTRAINT `room_bookings_booking_group_id_foreign` FOREIGN KEY (`booking_group_id`) REFERENCES `room_booking_groups` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `room_bookings_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `room_bookings_room_id_foreign` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `room_bookings_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -266,32 +236,7 @@ CREATE TABLE IF NOT EXISTS `room_booking_details` (
 
 -- Data exporting was unselected.
 
--- Dumping structure for table lms_simple.room_booking_groups
-CREATE TABLE IF NOT EXISTS `room_booking_groups` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) unsigned NOT NULL,
-  `room_id` bigint(20) unsigned NOT NULL,
-  `course_id` bigint(20) unsigned DEFAULT NULL,
-  `title` varchar(255) NOT NULL,
-  `purpose` varchar(255) DEFAULT NULL,
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  `recurrence_type` enum('none','weekly') NOT NULL DEFAULT 'none',
-  `recurrence_days` varchar(20) DEFAULT NULL,
-  `start_date` date NOT NULL,
-  `end_date` date NOT NULL,
-  `status` enum('pending','approved','rejected','cancelled') NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `room_booking_groups_user_id_foreign` (`user_id`),
-  KEY `room_booking_groups_course_id_foreign` (`course_id`),
-  KEY `idx_room_booking_groups_dates` (`start_date`,`end_date`),
-  KEY `idx_room_booking_groups_room` (`room_id`),
-  CONSTRAINT `room_booking_groups_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `room_booking_groups_room_id_foreign` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `room_booking_groups_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- Data exporting was unselected.
 
