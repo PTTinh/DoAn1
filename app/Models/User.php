@@ -57,11 +57,6 @@ class User extends Authenticatable
 		return $this->hasMany(CourseRegistration::class, 'created_by');
 	}
 
-	public function room_booking_groups()
-	{
-		return $this->hasMany(RoomBookingGroup::class);
-	}
-
 	public function room_bookings()
 	{
 		return $this->hasMany(RoomBooking::class, 'created_by');

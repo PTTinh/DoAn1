@@ -471,17 +471,6 @@ INSERT INTO `sliders` (`id`, `title`, `description`, `image_url`, `link_url`, `p
 (3, 'Khai giảng khóa học mới', 'Lập trình Fullstack với Laravel và React', 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3', '/courses/lap-trinh-web-fullstack-laravel', 3, 1, '2024-10-15 00:00:00', '2024-11-15 23:59:59', 1, NOW(), NOW()),
 (4, 'Trung tâm đào tạo chất lượng cao', 'Cam kết việc làm sau khi tốt nghiệp', 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1', '/about', 4, 1, '2024-01-01 00:00:00', '2024-12-31 23:59:59', 1, NOW(), NOW());
 
-INSERT INTO `room_booking_groups` (`id`, `user_id`, `room_id`, `course_id`, `title`, `purpose`, `start_time`, `end_time`, `recurrence_type`, `recurrence_days`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 1, 'Lớp Laravel thứ 2-4-6', 'Lớp học chính khóa', '13:00:00', '17:00:00', 'weekly', '2,4,6', '2024-11-04', '2024-12-31', 'approved', NOW(), NOW()),
-(2, 2, 3, 6, 'Thực hành ReactJS', 'Buổi thực hành lab', '08:00:00', '12:00:00', 'weekly', '3,5', '2024-11-13', '2024-12-20', 'pending', NOW(), NOW());
-
--- Tạo bản backup cho các booking cá nhân
-INSERT INTO `room_booking_backups` (`id`, `booking_group_id`, `user_id`, `room_id`, `course_id`, `booking_date`, `start_time`, `end_time`, `purpose`, `is_recurring`, `status`, `created_at`, `updated_at`) VALUES
-(1, NULL, 2, 1, 1, '2024-11-05', '08:00:00', '12:00:00', 'Lớp học Laravel', 0, 'approved', NOW(), NOW()),
-(2, NULL, 3, 2, NULL, '2024-11-10', '13:00:00', '17:00:00', 'Hội thảo Marketing', 0, 'approved', NOW(), NOW()),
-(3, 1, 2, 1, 1, '2024-11-04', '13:00:00', '17:00:00', 'Lớp học Laravel', 1, 'approved', NOW(), NOW()),
-(4, 1, 2, 1, 1, '2024-11-06', '13:00:00', '17:00:00', 'Lớp học Laravel', 1, 'approved', NOW(), NOW());
-
 -- Xóa dữ liệu cũ trong bảng settings nếu có
 DELETE FROM `settings`;
 

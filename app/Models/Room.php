@@ -21,8 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
- * @property Collection|RoomBookingGroup[] $room_booking_groups
  * @property Collection|RoomBooking[] $room_bookings
  * @property Collection|Equipment[] $equipment
  *
@@ -48,11 +46,6 @@ class Room extends Model
 		'seo_title',
 		'seo_image'
 	];
-
-	public function room_booking_groups()
-	{
-		return $this->hasMany(RoomBookingGroup::class);
-	}
 
 	public function room_bookings()
 	{

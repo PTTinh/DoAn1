@@ -369,8 +369,6 @@ class RoomBookingResource extends Resource
                         'cancelled' => 'Đã hủy',
                     ])
                     ->placeholder('Mặc định: Chờ duyệt & đã duyệt')
-                    // mặc định chỉ hiển thị các đặt phòng chờ duyệt và đã duyệt
-                    // ->default(['pending', 'approved'])
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['values'])) {
                             // Nếu không có filter nào được chọn thì chỉ hiển thị các đặt phòng chờ duyệt và đã duyệt

@@ -37,12 +37,6 @@ class EditRoomBooking extends EditRecord
         }
     }
 
-    // protected function mutateFormDataBeforeSave(array $data): array
-    // {
-    //     // Xóa chi tiết cũ nếu có
-    //     (new RoomBookingService())->deleteBookingDetails($data['id'] ?? null);
-    //     return $data;
-    // }
 
     // sau khi lưu thành công thì thêm lại data cho bảng details
     protected function afterSave(): void
