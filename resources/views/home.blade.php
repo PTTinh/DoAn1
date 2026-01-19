@@ -102,7 +102,7 @@
         </div>
     </section>
     <!-- Feedback/Testimonials Section -->
-    @php
+    {{-- @php
         $feedbacks = json_decode(App\Helpers\SettingHelper::get('feedback', '[]'), true);
         if (!is_array($feedbacks)) {
             $feedbacks = [];
@@ -149,7 +149,7 @@
                 </div>
             </div>
         </section>
-    @endif
+    @endif --}}
     <!-- Latest Courses Section -->
     @if ($courses->count() > 0)
         <section class="py-5">
@@ -238,6 +238,7 @@
             document.querySelectorAll('.carousel-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const url = this.dataset.url;
+                    //mở cùng một tab
                     if (url) window.open(url, '_blank');
                 });
             });

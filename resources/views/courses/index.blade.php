@@ -68,7 +68,7 @@
                 </div>
 
                 <!-- Pagination -->
-                @if ($courses->hasPages())
+                @if (method_exists($courses, 'hasPages') && $courses->hasPages())
                     <nav aria-label="Page navigation" class="mt-5">
                         {{ $courses->links('pagination::bootstrap-5') }}
                     </nav>

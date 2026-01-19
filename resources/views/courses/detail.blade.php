@@ -120,28 +120,26 @@
                             <form action="{{ route('courses.registration') }}" method="POST" class="needs-validation">
                                 @csrf
                                 <input type="hidden" name="course_id" value="{{ $course->id }}">
-
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Họ và tên</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                        id="name" name="name" placeholder="Nhập họ và tên" value="{{ old('name') }}" required>
-                                    @error('name')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                        id="email" name="email" placeholder="Nhập email" value="{{ old('email') }}" required>
-                                    @error('email')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Số điện thoại</label>
-                                    <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
-                                        id="phone" name="phone" placeholder="Nhập số điện thoại" value="{{ old('phone') }}" required>
-                                    @error('phone')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
+                                <x-app-input 
+                                    name="name" 
+                                    label="Họ và tên" 
+                                    placeholder="Nhập họ và tên" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    type="email"
+                                    name="email" 
+                                    label="Email" 
+                                    placeholder="Nhập email" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    type="tel"
+                                    name="phone" 
+                                    label="Số điện thoại" 
+                                    placeholder="Nhập số điện thoại" 
+                                    required 
+                                />
                                 <!-- reCAPTCHA -->
                                 @if (config('services.recaptcha.enabled', false))
                                     <x-recaptcha form-type="course-registration" />

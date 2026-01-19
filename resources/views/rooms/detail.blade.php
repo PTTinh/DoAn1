@@ -89,53 +89,57 @@
                             <form action="{{ route('rooms.bookings') }}" method="POST" class="needs-validation">
                                 @csrf
                                 <input type="hidden" name="room_id" value="{{ $room->id }}">
-
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Họ và tên</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                        id="name" name="name" value="{{ old('name') }}" required>
-                                    @error('name')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                        id="email" name="email" value="{{ old('email') }}" required>
-                                    @error('email')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Số điện thoại</label>
-                                    <input type="tel" class="form-control @error('phone') is-invalid @enderror" 
-                                        id="phone" name="phone" value="{{ old('phone') }}" required>
-                                    @error('phone')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="participants" class="form-label">Số người tham gia</label>
-                                    <input type="number" class="form-control @error('participants_count') is-invalid @enderror" 
-                                        id="participants" name="participants_count" value="{{ old('participants_count', 5) }}" required>
-                                    @error('participants_count')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="reason" class="form-label">Lý do đặt phòng</label>
-                                    <input type="text" class="form-control @error('reason') is-invalid @enderror" 
-                                        id="reason" name="reason" value="{{ old('reason') }}" required>
-                                    @error('reason')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
+                                <x-app-input 
+                                    name="name" 
+                                    label="Họ và tên" 
+                                    type="text" 
+                                    :value="old('name')" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    name="email" 
+                                    label="Email" 
+                                    type="email" 
+                                    :value="old('email')" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    name="phone" 
+                                    label="Số điện thoại" 
+                                    type="tel" 
+                                    :value="old('phone')" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    name="participants_count" 
+                                    label="Số người tham gia" 
+                                    type="number" 
+                                    :value="old('participants_count', 5)" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    name="reason" 
+                                    label="Lý do đặt phòng" 
+                                    type="text" 
+                                    :value="old('reason')" 
+                                    required 
+                                />
                                 <div class="mb-3">
                                     <label for="notes" class="form-label">Ghi chú (không bắt buộc)</label>
-                                    <textarea class="form-control" id="notes" name="notes" rows="3">{{ old('notes') }}</textarea>
+                                    <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3">{{ old('notes') }}</textarea>
+                                    @error('notes')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="room_type" class="form-label">Loại đặt phòng</label>
-                                    <select class="form-select" id="room_type" name="room_type" onchange="toggleRecurrence(this.value)">
+                                    <select class="form-select @error('room_type') is-invalid @enderror" id="room_type" name="room_type" onchange="toggleRecurrence(this.value)">
                                         <option value="none" {{ old('room_type') == 'none' ? 'selected' : '' }}>Đặt theo ngày</option>
                                         <option value="weekly" {{ old('room_type') == 'weekly' ? 'selected' : '' }}>Đặt theo tuần</option>
                                     </select>
+                                    @error('room_type')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div id="recurrence-days" style="display: {{ old('room_type') == 'weekly' ? 'block' : 'none' }}; margin-bottom: 1rem;">
@@ -165,35 +169,34 @@
                                         @endforeach
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="start_date" class="form-label">Ngày bắt đầu</label>
-                                    <input type="date" class="form-control @error('start_date') is-invalid @enderror" 
-                                        id="start_date" name="start_date" value="{{ old('start_date') }}" required>
-                                    @error('start_date')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="end_date" class="form-label">Ngày kết thúc</label>
-                                    <input type="date" class="form-control @error('end_date') is-invalid @enderror" 
-                                        id="end_date" name="end_date" value="{{ old('end_date') }}" required>
-                                    @error('end_date')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="start_time" class="form-label">Giờ bắt đầu</label>
-                                    <input type="time" class="form-control @error('start_time') is-invalid @enderror" 
-                                        id="start_time" name="start_time" value="{{ old('start_time') }}" required>
-                                    @error('start_time')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="end_time" class="form-label">Giờ kết thúc</label>
-                                    <input type="time" class="form-control @error('end_time') is-invalid @enderror" 
-                                        id="end_time" name="end_time" value="{{ old('end_time') }}" required>
-                                    @error('end_time')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                </div>
-
+                                <x-app-input 
+                                    name="start_date" 
+                                    label="Ngày bắt đầu" 
+                                    type="date" 
+                                    :value="old('start_date')" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    name="end_date" 
+                                    label="Ngày kết thúc" 
+                                    type="date" 
+                                    :value="old('end_date')" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    name="start_time" 
+                                    label="Giờ bắt đầu" 
+                                    type="time" 
+                                    :value="old('start_time')" 
+                                    required 
+                                />
+                                <x-app-input 
+                                    name="end_time" 
+                                    label="Giờ kết thúc" 
+                                    type="time" 
+                                    :value="old('end_time')" 
+                                    required 
+                                />
                                 <!-- reCAPTCHA -->
                                 @if (config('services.recaptcha.enabled', false))
                                     <x-recaptcha form-type="room-booking" />

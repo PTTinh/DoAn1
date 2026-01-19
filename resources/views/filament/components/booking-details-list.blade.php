@@ -42,7 +42,7 @@
                     @php
                         $style = $detail->is_duplicate ? 'color: #92400e; font-weight: 500;' : ' color: #099840ff; font-weight: 500;';
                     @endphp
-                    <tr class="{{ $detail->is_duplicate ? 'bg-gray-100' : 'hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                    <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                             {{ \Carbon\Carbon::parse($detail->booking_date)->format('d/m/Y') }}
                             <p class="text-xs text-gray-500 dark:text-gray-400">

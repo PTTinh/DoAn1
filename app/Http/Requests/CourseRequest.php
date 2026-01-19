@@ -28,15 +28,9 @@ class CourseRequest extends FormRequest
             'email' => 'required|email|max:255|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
             'phone' => 'required|string|regex:/^0[0-9]{9}$/|unique:course_registrations,student_phone,NULL,id,course_id,' . $this->course_id,
         ];
-
-        // Chỉ thêm reCAPTCHA validation cho form đăng ký khóa học từ frontend
-        if (
-            config('services.recaptcha.enabled', false) &&
-            (request()->is('khoa-hoc/*/dang-ky') || request()->routeIs('courses.registration'))
-        ) {
-            $rules['g-recaptcha-response'] = ['required', new RecaptchaRule()];
+        if (\App\Helpers\RecaptchaHelper::isEnabled()) {
+            $rules['g-recaptcha-response'] = [new RecaptchaRule()];
         }
-
         return $rules;
     }
     public function atributes(): array
@@ -71,7 +65,6 @@ class CourseRequest extends FormRequest
             'phone.string' => 'Số điện thoại phải là chuỗi ký tự.',
             'phone.regex' => 'Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.',
             'phone.unique' => 'Số điện thoại đã được đăng ký cho khóa học này.',
-            'g-recaptcha-response.required' => 'Vui lòng xác minh bạn không phải là robot.',
             'g-recaptcha-response.recaptcha' => 'Xác minh reCAPTCHA không thành công. Vui lòng thử lại.',
         ];
     }

@@ -43,7 +43,7 @@ class RoomRequest extends FormRequest
         } else {
             $rules['repeat_days'] .= '|nullable';
             $rules['end_date'] = '|same:start_date';
-            
+
             $date = Carbon::createFromFormat('Y-m-d', $this->start_date);
             if ($date->isToday()) {
                 $rules['start_time'] .= '|after_or_equal:' . now()->addMinutes(30)->format('H:i');
@@ -53,12 +53,8 @@ class RoomRequest extends FormRequest
         if ($room) {
             $rules['participants_count'] = 'required|integer|min:1|max:' . $room->capacity;
         }
-        // Chỉ thêm reCAPTCHA validation cho form đặt phòng từ frontend
-        if (
-            config('services.recaptcha.enabled', false) &&
-            request()->is('phong-hoc/*/đat-phong') || request()->routeIs('rooms.bookings')
-        ) {
-            $rules['g-recaptcha-response'] = ['required', new RecaptchaRule()];
+        if(\App\Helpers\RecaptchaHelper::isEnabled()){
+            $rules['g-recaptcha-response'] = [new RecaptchaRule()];
         }
         return $rules;
     }
@@ -145,7 +141,6 @@ class RoomRequest extends FormRequest
             'phone.string' => 'Số điện thoại khách hàng phải là chuỗi ký tự và không được chứa ký tự đặc biệt.',
             'phone.max' => 'Số điện thoại khách hàng không được vượt quá :max ký tự.',
             'phone.regex' => 'Số điện thoại khách hàng không hợp lệ. Vui lòng nhập đúng định dạng.',
-            'g-recaptcha-response.required' => 'Vui lòng xác minh bạn không phải là robot.',
             'g-recaptcha-response.recaptcha' => 'Xác minh reCAPTCHA không thành công. Vui lòng thử lại.',
         ];
     }

@@ -64,7 +64,7 @@
             </thead>
             <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach($registrations as $index => $registration)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                             {{ $index + 1 }}
                         </td>

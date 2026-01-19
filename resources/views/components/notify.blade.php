@@ -1,26 +1,38 @@
 @props(['type' => 'success', 'message' => '', 'show' => false])
 @php
     $classes = [
-        'success' => 'notify-success',
-        'error' => 'notify-error',
-        'warning' => 'notify-warning',
+        'success' => 'bg-success',
+        'error' => 'bg-danger',
+        'warning' => 'bg-warning',
+        'info' => 'bg-info',
     ];
     
-    $notifyClass = $classes[$type] ?? 'notify-success';
+    $alertClass = $classes[$type] ?? 'bg-success';
 @endphp
 
-<div class="notify {{ $notifyClass }} {{ $show ? 'show' : 'hidden' }}" 
-     style="{{ $show ? 'display: block;' : 'display: none;' }}">
-    {{ $message ?: $slot }}
+<div class="toast-container position-fixed top-1 end-0 p-3" style="z-index: 9999;">
+    <div class="toast {{ $show ? 'show' : '' }}" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header {{ $alertClass }} text-white">
+            <strong class="me-auto">Thông báo</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ $message ?: $slot }}
+        </div>
+    </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const notify = document.querySelector('.notify');
-        if (notify && notify.style.display !== 'none') {
-            setTimeout(() => {
-                notify.style.display = 'none';
-            }, 5000); // 5 seconds
-        }
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        var toastList = toastElList.map(function(toastEl) {
+            return new bootstrap.Toast(toastEl, {
+                autohide: true,
+                delay: 3000
+            });
+        });
+        @if($show)
+            toastList.forEach(toast => toast.show());
+        @endif
     });
 </script>

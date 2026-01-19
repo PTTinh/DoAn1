@@ -7,7 +7,7 @@
 @endphp
 
 @if($isEnabled && $siteKey)
-    <div class="form-group recaptcha-wrapper">
+    <div class="form-group recaptcha-wrapper mb-3 d-flex justify-content-center">
         <div 
             class="g-recaptcha" 
             data-sitekey="{{ $siteKey }}"

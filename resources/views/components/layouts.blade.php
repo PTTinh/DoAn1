@@ -9,25 +9,14 @@
         {{ $attributes['title'] ? $attributes['title'] . ' - ' : '' }}{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}
     </title>
 
-    {{-- SEO Meta Tags --}}
     <x-seo ogTitle="{{ $attributes['ogTitle'] ?? App\Helpers\SettingHelper::get('seo_title', 'Chưa cập nhật') }}"
         ogDescription="{{ $attributes['ogDescription'] ?? App\Helpers\SettingHelper::get('seo_description', 'Chưa cập nhật') }}"
         ogImage="{{ $attributes['ogImage'] ?? asset('storage/' . App\Helpers\SettingHelper::get('seo_image')) }}" />
     <link rel="icon" href="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}" type="image/png">
-    
-    {{-- Bootstrap 5 CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    {{-- Bootstrap Icons --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
-    {{-- Custom Bootstrap CSS --}}
+ 
     <link rel="stylesheet" href="{{ asset('css/bootstrap-custom.css') }}">
-    
-    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
-
-    {{-- Custom CSS from settings --}}
-    {{-- Custom CSS từ settings --}}
     @if (App\Helpers\SettingHelper::get('custom_css'))
         <style>
             {!! App\Helpers\SettingHelper::get('custom_css') !!}
@@ -414,186 +403,6 @@
     @if(App\Helpers\SettingHelper::get('ga_body'))
         {!! App\Helpers\SettingHelper::get('ga_body') !!}
     @endif
-    <script>
-        const dropdownToggles1 = document.getElementById('dropdown-toggle-1');
-        const dropdownToggles2 = document.getElementById('dropdown-toggle-2');
-        const dropdownMenus1 = document.getElementById('dropdown-menu-1');
-        const dropdownMenus2 = document.getElementById('dropdown-menu-2');
-        const icon1 = document.getElementById('dropdown-icon-1');
-        const icon2 = document.getElementById('dropdown-icon-2');
-        dropdownToggles1.addEventListener('change', function() {
-            if (this.checked) {
-                dropdownMenus1.className += ' show-dropdown active';
-                icon1.style.transform = 'rotate(180deg)';
-            } else {
-                dropdownMenus1.className = 'dropdown-menu';
-                icon1.style.transform = 'rotate(0deg)';
-            }
-        });
-        dropdownToggles2.addEventListener('change', function() {
-            if (this.checked) {
-                dropdownMenus2.className += ' show-dropdown active';
-                icon2.style.transform = 'rotate(180deg)';
-            } else {
-                dropdownMenus2.className = 'dropdown-menu';
-                icon2.style.transform = 'rotate(0deg)';
-            }
-        });
-
-        function isTouchDevice() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        }
-
-        if (isTouchDevice()) {
-            document.querySelectorAll('.desktop-menu .dropdown > .dropdown-toggle').forEach(function(toggle) {
-                let tapped = false;
-                toggle.addEventListener('touchend', function(e) {
-                    const parent = toggle.parentElement;
-                    const dropdownMenu = parent.querySelector('.dropdown-menu');
-                    if (!tapped) {
-                        e.preventDefault();
-                        // Hide other dropdowns
-                        document.querySelectorAll('.desktop-menu .dropdown .dropdown-menu').forEach(
-                            function(menu) {
-                                if (menu !== dropdownMenu) menu.classList.remove('show-dropdown');
-                            });
-                        dropdownMenu.classList.toggle('show-dropdown');
-                        tapped = true;
-                        setTimeout(function() {
-                            tapped = false;
-                        }, 500);
-                    } else {
-                        window.location = toggle.getAttribute('href');
-                    }
-                });
-            });
-        }
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleBtn = document.getElementById('contactToggle');
-            const popup = document.getElementById('contactPopup');
-            const overlay = document.getElementById('contactOverlay');
-            const icons = document.querySelectorAll('.btn-icon-wrapper .icon');
-
-            let currentIconIndex = 0;
-            let iconInterval;
-
-            // Initialize first icon
-            icons[0].classList.add('active');
-
-            function startIconSlider() {
-                iconInterval = setInterval(() => {
-                    const currentIcon = icons[currentIconIndex];
-                    const nextIconIndex = (currentIconIndex + 1) % icons.length;
-                    const nextIcon = icons[nextIconIndex];
-
-                    // Current icon exits to left
-                    currentIcon.classList.remove('active');
-                    currentIcon.classList.add('exit-left');
-
-                    // Next icon enters from right
-                    nextIcon.classList.remove('enter-right');
-                    nextIcon.classList.add('active');
-
-                    // Clean up classes after animation
-                    setTimeout(() => {
-                        currentIcon.classList.remove('exit-left');
-                        currentIcon.classList.add('enter-right');
-                    }, 500);
-
-                    currentIconIndex = nextIconIndex;
-                }, 2000); // Change icon every 2 seconds
-            }
-
-            function stopIconSlider() {
-                if (iconInterval) {
-                    clearInterval(iconInterval);
-                    iconInterval = null;
-                }
-            }
-
-            // Start icon slider
-            startIconSlider();
-
-            function togglePopup() {
-                const isActive = popup.classList.contains('active');
-
-                if (isActive) {
-                    closePopup();
-                } else {
-                    openPopup();
-                }
-            }
-
-            function openPopup() {
-                popup.classList.add('active');
-                overlay.classList.add('active');
-
-                // Add subtle bounce effect to main button
-                toggleBtn.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    toggleBtn.style.transform = 'scale(1)';
-                }, 100);
-            }
-
-            function closePopup() {
-                popup.classList.remove('active');
-                overlay.classList.remove('active');
-            }
-
-            // Event listeners
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                togglePopup();
-            });
-
-            overlay.addEventListener('click', closePopup);
-
-            // Close popup when clicking contact buttons
-            const contactBtns = popup.querySelectorAll('.contact-btn');
-            contactBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    setTimeout(closePopup, 100);
-                });
-            });
-
-            // Close popup when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!toggleBtn.contains(e.target) && !popup.contains(e.target)) {
-                    closePopup();
-                }
-            });
-
-            // Keyboard accessibility
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closePopup();
-                }
-            });
-
-            // Pause slider on hover (only on non-touch devices)
-            if (!('ontouchstart' in window)) {
-                toggleBtn.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px) scale(1.05)';
-                    stopIconSlider();
-                });
-
-                toggleBtn.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                    startIconSlider();
-                });
-            }
-
-            // Handle visibility change (pause when tab is not active)
-            document.addEventListener('visibilitychange', function() {
-                if (document.hidden) {
-                    stopIconSlider();
-                } else {
-                    startIconSlider();
-                }
-            });
-        });
     </script>
     @if (App\Helpers\SettingHelper::get('custom_js'))
         <script>
