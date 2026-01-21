@@ -10,6 +10,14 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Storage;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 
 class Seo extends Page
 {
@@ -58,10 +66,10 @@ class Seo extends Page
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Meta Tags')
+                Section::make('Meta Tags')
                     ->description('Cài đặt các thẻ meta cho trang web của bạn')
                     ->schema([
-                        Forms\Components\FileUpload::make('seo_image')
+                        FileUpload::make('seo_image')
                             ->label('Meta Image')
                             ->image()
                             ->directory('seo-images')
@@ -76,51 +84,50 @@ class Seo extends Page
                             ])
                             ->helperText('Ảnh đại diện khi chia sẻ lên mạng xã hội. Kích thước đề xuất: 1200x630px'),
 
-                        Forms\Components\TextInput::make('seo_title')
+                        TextInput::make('seo_title')
                             ->label('Meta Title')
                             ->helperText('Tiêu đề hiển thị trên kết quả tìm kiếm Google')
                             ->maxLength(100),
 
-                        Forms\Components\Textarea::make('seo_description')
+                        Textarea::make('seo_description')
                             ->label('Meta Description')
                             ->helperText('Mô tả hiển thị trên kết quả tìm kiếm Google')
                             ->maxLength(300)
                             ->rows(2),
 
-                        Forms\Components\Textarea::make('seo_keywords')
+                        Textarea::make('seo_keywords')
                             ->label('Meta Keywords')
                             ->helperText('Từ khóa liên quan đến nội dung trang web, phân cách bằng dấu phẩy')
                             ->maxLength(300)
                             ->rows(2),
                     ]),
 
-                Forms\Components\Section::make('Sitemap')
+                Section::make('Sitemap')
                     ->description('Quản lý file sitemap.xml cho trang web')
                     ->schema([
-                        Forms\Components\Placeholder::make('sitemap_info')
+                        Placeholder::make('sitemap_info')
                             ->label('Thông tin về Sitemap')
                             ->content(view('filament.components.sitemap-info')),
 
-                        Forms\Components\FileUpload::make('sitemap_file')
+                        FileUpload::make('sitemap_file')
                             ->label('Upload Sitemap File')
                             ->acceptedFileTypes(['application/xml', 'text/xml'])
                             ->maxSize(5120) // 5MB
-                            ->directory('sitemaps')
-                            ->visibility('public')
-                            ->helperText('Chỉ chấp nhận file .xml, tối đa 5MB'),
+                            ->disk('public')
+                            ->helperText('Chỉ chấp nhận file .xml, tối đa 5MB.'),
                     ]),
 
-                Forms\Components\Section::make('Google Analytics')
+                Section::make('Google Analytics')
                     ->description('Thêm mã Google Analytics vào trang web của bạn')
                     ->schema([
-                        Forms\Components\Textarea::make('ga_head')
+                        Textarea::make('ga_head')
                             ->label('GA Code in <head>')
                             ->helperText("Thêm mã Google Analytics vào thẻ <head> của trang web. Bạn có thể lấy mã này từ trang quản trị Google Analytics của bạn.")
                             ->placeholder("<script async src='https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX'></script>")
                             ->rows(2)
                             ->maxLength(2000),
 
-                        Forms\Components\Textarea::make('ga_body')
+                        Textarea::make('ga_body')
                             ->label('GA Code after <body>')
                             ->helperText('Thêm mã Google Analytics ngay sau thẻ <body> của trang web. Bạn có thể lấy mã này từ trang quản trị Google Analytics của bạn.')
                             ->placeholder("<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'G-XXXXXXXXXX');\n</script>")
@@ -136,47 +143,20 @@ class Seo extends Page
     {
         try {
             $data = $this->form->getState();
-
-            // Save meta settings
-            Setting::updateOrCreate(
-                ['setting_key' => 'seo_title'],
-                ['setting_value' => $data['seo_title']]
-            );
-
-            Setting::updateOrCreate(
-                ['setting_key' => 'seo_description'],
-                ['setting_value' => $data['seo_description']]
-            );
-
-            Setting::updateOrCreate(
-                ['setting_key' => 'seo_keywords'],
-                ['setting_value' => $data['seo_keywords']]
-            );
-
-            if (!empty($data['seo_image'])) {
-                Setting::updateOrCreate(
-                    ['setting_key' => 'seo_image'],
-                    ['setting_value' => $data['seo_image']]
-                );
+            SettingHelper::clearCache();
+            foreach ($data as $key => $value) {
+                SettingHelper::set($key, $value);
             }
-            Setting::updateOrCreate(
-                ['setting_key' => 'ga_head'],
-                ['setting_value' => $data['ga_head'] ?? '']
-            );
-            Setting::updateOrCreate(
-                ['setting_key' => 'ga_body'],
-                ['setting_value' => $data['ga_body'] ?? '']
-            );
 
-            // Handle sitemap upload
+            // thao tác với file sitemap nếu có
             if (!empty($data['sitemap_file'])) {
                 $sitemapPath = $data['sitemap_file'];
 
-                // Copy uploaded file to public root as sitemap.xml
+                // sao chép file đã tải lên vào thư mục public với tên sitemap.xml
                 $content = Storage::disk('public')->get($sitemapPath);
                 file_put_contents(public_path('sitemap.xml'), $content);
 
-                // Clean up uploaded file
+                // Xóa file tạm đã tải lên
                 Storage::disk('public')->delete($sitemapPath);
 
                 Notification::make()

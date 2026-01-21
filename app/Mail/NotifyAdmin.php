@@ -70,22 +70,21 @@ class NotifyAdmin extends Mailable
                 'bookingCode' => $this->data->booking_code,
                 'roomName' => $this->data->room->name,
                 'roomLocation' => $this->data->room->location,
-                'startDate' => $this->data->start_date->format('d/m/Y'),
-                'endDate' => $this->data->end_date ? $this->data->end_date->format('d/m/Y') : null,
+                'startDate' => $this->data->start_date,
+                'endDate' => $this->data->end_date ? $this->data->end_date : null,
                 'reason' => $this->data->reason,
                 'status' => $this->data->status,
                 'bookingDetails' => $this->data->room_booking_details,
             ]);
         } elseif ($this->type === 'registration') {
-            // Adjust fields for course registration; assuming similar structure
             $with = array_merge($with, [
                 'customerName' => $this->data->customer_name,
-                'registrationCode' => $this->data->registration_code, // Assuming this field exists
-                'courseName' => $this->data->course->name, // Assuming course relationship
-                'courseDescription' => $this->data->course->description ?? '', // Optional
-                'startDate' => $this->data->start_date->format('d/m/Y'), // Assuming dates exist
-                'endDate' => $this->data->end_date ? $this->data->end_date->format('d/m/Y') : null,
-                'reason' => $this->data->reason ?? '', // Optional
+                'registrationCode' => $this->data->registration_code, 
+                'courseName' => $this->data->course->name, 
+                'courseDescription' => $this->data->course->description ?? '', 
+                'startDate' => $this->data->start_date, 
+                'endDate' => $this->data->end_date ? $this->data->end_date : null,
+                'reason' => $this->data->reason ?? '',
                 'status' => $this->data->status,
             ]);
         }
