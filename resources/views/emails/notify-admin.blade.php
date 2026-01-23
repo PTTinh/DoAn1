@@ -84,8 +84,8 @@
         <h1>
             @if ($type === 'booking')
                 🏠 Thông báo đặt phòng mới
-            @elseif($type === 'registration')
-                📚 Thông báo đăng ký khóa học mới
+            @elseif($type === 'consultation')
+                📚 Thông báo đăng ký tư vấn khóa học mới
             @else
                 📢 Thông báo mới
             @endif
@@ -98,8 +98,8 @@
         <p>
             @if ($type === 'booking')
                 Có một yêu cầu đặt phòng mới cần được xem xét và xử lý.
-            @elseif($type === 'registration')
-                Có một yêu cầu đăng ký khóa học mới cần được xem xét và xử lý.
+            @elseif($type === 'consultation')
+                Có một yêu cầu đăng ký tư vấn khóa học mới cần được xem xét và xử lý.
             @else
                 Có một thông báo mới cần được xem xét và xử lý.
             @endif
@@ -149,13 +149,33 @@
                         <span class="value">{{ $reason }}</span>
                     </div>
                 @endif
-            @elseif($type === 'registration')
-                <h3>📋 Chi tiết đăng ký khóa học:</h3>
-
-                <div class="detail-row">
-                    <span class="label">Mã đăng ký:</span>
-                    <span class="value">{{ $registrationCode }}</span>
-                </div>
+                @if (count($bookingDetails) > 0)
+                    <div class="details-box">
+                        <h3 style="margin-top: 0; color: #4b5563;">📅 Chi tiết lịch đặt phòng:</h3>
+                        <table class="details-table">
+                            <thead>
+                                <tr>
+                                    <th>📅 Ngày</th>
+                                    <th>⏰ Thời gian</th>
+                                    <th>📊 Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($bookingDetails as $detail)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($detail->booking_date)->format('d/m/Y') }}</td>
+                                        <td>
+                                            {{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} -
+                                            {{ \Carbon\Carbon::parse($detail->end_time)->format('H:i') }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            @elseif($type === 'consultation')
+                <h3>📋 Chi tiết đăng ký tư vấn khóa học:</h3>
 
                 <div class="detail-row">
                     <span class="label">Người đăng ký:</span>
@@ -163,16 +183,19 @@
                 </div>
 
                 <div class="detail-row">
+                    <span class="label">Số điện thoại:</span>
+                    <span class="value">{{ $customerPhone }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ $customerEmail }}</span>
+                </div>
+
+                <div class="detail-row">
                     <span class="label">Khóa học:</span>
                     <span class="value">{{ $courseName }}</span>
                 </div>
-
-                @if ($courseDescription)
-                    <div class="detail-row">
-                        <span class="label">Mô tả:</span>
-                        <span class="value">{{ $courseDescription }}</span>
-                    </div>
-                @endif
 
                 <div class="detail-row">
                     <span class="label">Ngày bắt đầu:</span>
@@ -186,12 +209,6 @@
                     </div>
                 @endif
 
-                @if ($reason)
-                    <div class="detail-row">
-                        <span class="label">Lý do:</span>
-                        <span class="value">{{ $reason }}</span>
-                    </div>
-                @endif
             @endif
 
             <div class="detail-row">

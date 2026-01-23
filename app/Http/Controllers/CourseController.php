@@ -63,10 +63,11 @@ class CourseController extends Controller
         $registration->student_email = $validatedData['email'];
         $registration->created_by = Auth::id() ?? null;
         $registration->save();
-        Mail::to($registration->student_email)->send(new CourseRegistrationNotification($registration));    
+        //consultation là tư vấn
+        Mail::to($registration->student_email)->send(new CourseRegistrationNotification($registration, 'consultation'));
         $adminUsers = User::where('role', '!=' , 'user')->get();
         foreach ($adminUsers as $admin) {
-            Mail::to($admin->email)->send(new NotifyAdmin('registration', $registration));
+            Mail::to($admin->email)->send(new NotifyAdmin('consultation', $registration));
         }
         return redirect()->route('courses.show', ['slug' => $course->slug])->with('success', 'Đăng ký khóa học thành công.');
     }

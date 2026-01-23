@@ -15,15 +15,19 @@ use Illuminate\Queue\SerializesModels;
 class CourseRegistrationNotification extends Mailable
 {
     use Queueable, SerializesModels;
-
+    
+    //tư vấn và đăng ký khóa học
+    public $type;
     public $courseRegistration;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(CourseRegistration $courseRegistration)
+    // type: consultation hoặc registration
+    public function __construct(CourseRegistration $courseRegistration, $type = 'registration')
     {
         $this->courseRegistration = $courseRegistration;
+        $this->type = $type;
     }
 
     /**
@@ -32,9 +36,12 @@ class CourseRegistrationNotification extends Mailable
     public function envelope(): Envelope
     {
         $centerName = SettingHelper::get('center_name', 'Hệ thống quản lý học tập');
-        
+        $subject = match ($this->type) {
+            'consultation' => 'Thông báo tư vấn khóa học - ' . $centerName,
+            default => 'Thông báo đăng ký khóa học - ' . $centerName,
+        };
         return new Envelope(
-            subject: 'Thông báo đăng ký khóa học - ' . $centerName,
+            subject: $subject,
             from: new Address(
                 config('mail.from.address', 'noreply@example.com'),
                 $centerName
@@ -47,8 +54,13 @@ class CourseRegistrationNotification extends Mailable
      */
     public function content(): Content
     {
+        if($this->type === 'consultation') {
+            $view = 'emails.course-registration-consultation';
+        } else {
+            $view = 'emails.course-registration';
+        }
         return new Content(
-            view: 'emails.course-registration',
+            view: $view,
             with: [
                 'studentName' => $this->courseRegistration->student_name,
                 'courseTitle' => $this->courseRegistration->course->title,
@@ -65,6 +77,7 @@ class CourseRegistrationNotification extends Mailable
                 'centerAddress' => SettingHelper::get('center_address', ''),
             ]
         );
+           
     }
 
     /**

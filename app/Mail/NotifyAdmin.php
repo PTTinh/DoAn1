@@ -38,7 +38,7 @@ class NotifyAdmin extends Mailable
         
         $subject = match ($this->type) {
             'booking' => 'Thông báo đặt phòng mới cho Admin - ' . $centerName,
-            'registration' => 'Thông báo đăng ký khóa học mới cho Admin - ' . $centerName,
+            'consultation' => 'Thông báo tư vấn khóa học mới cho Admin - ' . $centerName,
             default => 'Thông báo mới cho Admin - ' . $centerName,
         };
         
@@ -76,15 +76,14 @@ class NotifyAdmin extends Mailable
                 'status' => $this->data->status,
                 'bookingDetails' => $this->data->room_booking_details,
             ]);
-        } elseif ($this->type === 'registration') {
+        } else {
             $with = array_merge($with, [
-                'customerName' => $this->data->customer_name,
-                'registrationCode' => $this->data->registration_code, 
-                'courseName' => $this->data->course->name, 
-                'courseDescription' => $this->data->course->description ?? '', 
-                'startDate' => $this->data->start_date, 
-                'endDate' => $this->data->end_date ? $this->data->end_date : null,
-                'reason' => $this->data->reason ?? '',
+                'customerName' => $this->data->student_name,
+                'customerPhone' => $this->data->student_phone,
+                'customerEmail' => $this->data->student_email,
+                'courseName' => $this->data->course->title,
+                'startDate' => $this->data->course->start_date,
+                'endDate' => $this->data->course->end_date ? $this->data->course->end_date : null,
                 'status' => $this->data->status,
             ]);
         }
