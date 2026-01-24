@@ -59,7 +59,8 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-
+        env:
+          RECAPTCHA_ENABLED: false
       - name: Wait for Database
         run: |
           for i in {1..30}; do
