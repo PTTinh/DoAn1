@@ -118,10 +118,7 @@ jobs:
             fi
             
             # Install composer dependencies
-            if ! composer install --no-interaction --prefer-dist --optimize-autoloader 2>&1 | grep -q "Installing dependencies"; then
-              echo "Composer install with ignore-platform-req..."
-              composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-intl || true
-            fi
+            composer install --no-interaction --prefer-dist --optimize-autoloader || true
             
             npm install
             npm run build
@@ -132,7 +129,24 @@ jobs:
               php artisan key:generate
             fi
             
-            # Update .env wiuse file cache instead of DB cache)
+            # Update .env with database credentials
+            sed -i 's/DB_HOST=.*/DB_HOST=localhost/' .env
+            sed -i 's/DB_DATABASE=.*/DB_DATABASE=lms_simple_2/' .env
+            sed -i 's/DB_USERNAME=.*/DB_USERNAME=deploy/' .env
+            sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=deploy123/' .env
+            
+            # Test database connection
+            echo "Testing database connection..."
+            if mysql -h localhost -u deploy -pdeploy123 -e "SELECT 1" lms_simple_2 >/dev/null 2>&1; then
+              echo "✅ Database connection successful!"
+              
+              # Run migrations
+              php artisan migrate --force
+            else
+              echo "❌ Database connection failed, skipping migrations"
+            fi
+            
+            # Clear caches (use file cache instead of DB cache)
             echo "Clearing caches..."
             
             # Change cache driver to file temporarily for clearing
@@ -151,23 +165,6 @@ jobs:
             
             # Restore cache driver
             sed -i 's/CACHE_STORE=.*/CACHE_STORE=database/' .env
-              php artisan migrate --force
-            else
-              echo "❌ Database connection failed, skipping migrations"
-            fi
-            
-            # Clear caches (graceful - skip if DB not accessible)
-            echo "Clearing caches..."
-            php artisan cache:clear 2>&1 || true
-            php artisan config:cache 2>&1 || true
-            
-            # Route cache may fail due to duplicate route names, skip if error
-            if ! php artisan route:cache 2>&1; then
-              echo "⚠️ Route cache failed, skipping..."
-            fi
-            
-            # View cache
-            php artisan view:cache 2>&1 || true
             
             echo "✅ Cache operations completed!"
             
@@ -201,4 +198,3 @@ jobs:
                 }
               ]
             }
-
