@@ -21,6 +21,10 @@ class RecaptchaServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+         // Skip check nếu đang chạy trong CI environment
+        if (app()->environment('testing') || env('CI')) {
+            return;
+        }
         // Nếu reCAPTCHA không được cấu hình đúng thì show thông báo lỗi
         if (!config('services.recaptcha.site_key') || !config('services.recaptcha.secret_key')) {
             throw new \Exception('Cấu hình reCAPTCHA không hợp lệ. Vui lòng kiểm tra lại file [.env], tham khảo cấu hình từ file .env.example.');
