@@ -16,50 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, bcmath, ctype, fileinfo, json, tokenizer, xml, curl, pdo, pdo_mysql
-          tools: composer
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
-
-      - name: Install Node dependencies
-        run: npm ci
-
-      - name: Build assets
-        run: npm run build
-
-      - name: Create environment file
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-          
       - name: Setup Server (First time only)
         uses: appleboy/ssh-action@master
         with:
@@ -95,20 +51,43 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: 22
           script: |
-            cd ${{ secrets.DEPLOY_PATH }}
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+            
+            # Tạo thư mục nếu chưa có
+            mkdir -p "$DEPLOY_PATH"
+            cd "$DEPLOY_PATH"
+            
+            # Init git repo nếu chưa có
+            if [ ! -d ".git" ]; then
+              echo "Initializing git repository..."
+              git init
+              git remote add origin https://github.com/PTTinh/DoAn1.git
+            fi
+            
+            # Pull code mới
+            git fetch origin ${{ github.ref_name }}
+            git checkout -f origin/${{ github.ref_name }}
             
             # Backup database trước khi migration
             BACKUP_FILE="backups/db_backup_$(date +%Y%m%d_%H%M%S).sql"
             mkdir -p backups
             mysqldump -h ${{ secrets.DB_HOST }} -u ${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_NAME }} > "$BACKUP_FILE" 2>/dev/null || true
             
-            # Pull code mới
-            git pull origin ${{ github.ref_name }}
-            
             # Cài đặt dependencies
+            export COMPOSER_ALLOW_SUPERUSER=1
+            export COMPOSER_PROCESS_TIMEOUT=0
+            export COMPOSER_NO_INTERACTION=1
+            export COMPOSER_NO_AUDIT=1
             composer install --no-interaction --prefer-dist --optimize-autoloader
-            npm ci
+            
+            npm install
             npm run build
+            
+            # Copy .env nếu chưa có
+            if [ ! -f ".env" ]; then
+              cp .env.example .env
+              php artisan key:generate
+            fi
             
             # Chạy migrations
             php artisan migrate --force
@@ -119,7 +98,34 @@ jobs:
             php artisan route:cache
             php artisan view:cache
             
+            # Phân quyền
+            chown -R www-data:www-data "$DEPLOY_PATH"
+            chmod -R 755 "$DEPLOY_PATH"
+            chmod -R 775 "$DEPLOY_PATH/storage"
+            chmod -R 775 "$DEPLOY_PATH/bootstrap/cache"
+            
             # Restart services
             sudo systemctl restart php8.3-fpm
             sudo systemctl restart apache2
+            
+            echo "✅ Deployment completed!"
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "❌ Deployment failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Deployment Failed* 🚨\nRepository: ${{ github.repository }}\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}"
+                  }
+                }
+              ]
+            }
+
