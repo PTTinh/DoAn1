@@ -36,7 +36,7 @@ jobs:
 
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist
-
+        
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -48,9 +48,12 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-
-
+          
       - name: Install Node dependencies
         run: npm ci
+        env:
+          CI: true
+          RECAPTCHA_ENABLED: false
 
       - name: Build assets
         run: npm run build
@@ -60,6 +63,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate
         env:
+          CI: true
           RECAPTCHA_ENABLED: false
       - name: Wait for Database
         run: |
