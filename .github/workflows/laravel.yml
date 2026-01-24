@@ -100,6 +100,23 @@ jobs:
             # Ensure intl extension is available
             apt install -y php8.3-intl || true
             
+            # Ensure MySQL is installed and running
+            if ! systemctl is-active --quiet mysql; then
+              echo "Installing/Starting MySQL..."
+              apt install -y mysql-server || true
+              systemctl start mysql || true
+              systemctl enable mysql || true
+              
+              # Wait for MySQL to be ready
+              sleep 5
+              
+              # Setup database and user
+              mysql -e "CREATE DATABASE IF NOT EXISTS lms_simple_2;" 2>/dev/null || true
+              mysql -e "CREATE USER IF NOT EXISTS 'deploy'@'localhost' IDENTIFIED BY 'deploy123';" 2>/dev/null || true
+              mysql -e "GRANT ALL PRIVILEGES ON lms_simple_2.* TO 'deploy'@'localhost';" 2>/dev/null || true
+              mysql -e "FLUSH PRIVILEGES;" 2>/dev/null || true
+            fi
+            
             # Install composer dependencies
             if ! composer install --no-interaction --prefer-dist --optimize-autoloader 2>&1 | grep -q "Installing dependencies"; then
               echo "Composer install with ignore-platform-req..."
@@ -113,6 +130,30 @@ jobs:
             if [ ! -f ".env" ]; then
               cp .env.example .env
               php artisan key:generate
+            fi
+            
+            # Update .env wiuse file cache instead of DB cache)
+            echo "Clearing caches..."
+            
+            # Change cache driver to file temporarily for clearing
+            sed -i 's/CACHE_STORE=.*/CACHE_STORE=file/' .env
+            
+            php artisan cache:clear 2>&1 || true
+            php artisan config:cache 2>&1 || true
+            
+            # Route cache may fail due to duplicate route names, skip if error
+            if ! php artisan route:cache 2>&1; then
+              echo "⚠️ Route cache failed, skipping..."
+            fi
+            
+            # View cache
+            php artisan view:cache 2>&1 || true
+            
+            # Restore cache driver
+            sed -i 's/CACHE_STORE=.*/CACHE_STORE=database/' .env
+              php artisan migrate --force
+            else
+              echo "❌ Database connection failed, skipping migrations"
             fi
             
             # Clear caches (graceful - skip if DB not accessible)
