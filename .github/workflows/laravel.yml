@@ -22,6 +22,9 @@ jobs:
           php-version: '8.3'
           extensions: mbstring, bcmath, ctype, fileinfo, json, tokenizer, xml, curl, pdo, pdo_mysql
           tools: composer
+          
+      - name: Show runner IP
+        run: curl ifconfig.me
 
       - name: Get composer cache directory
         id: composer-cache
